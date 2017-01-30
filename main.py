@@ -14,11 +14,53 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 import webapp2
+import cgi
+
+# -*- coding: utf-8 -*-
+
+page_header = """
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>User Signup</title>
+    <style type="text/css">
+        .error {
+            color: red;
+        }
+    </style>
+    <h1>User Signup</h1>
+</head>
+<body>
+"""
+
+# html boilerplate for bottom of page
+page_footer = """
+</body>
+</html>
+"""
 
 class MainHandler(webapp2.RequestHandler):
+
+
+
     def get(self):
-        self.response.write('Hello world!')
+        signup_form = """
+            <form action="/signup" method="post">
+                <label>Username: </label><input type="text" name="username"/><br>
+                <label>Password: </label><input type="password" name="password1"/><br>
+                <label>Password again: </label><input type="password" name="password2"/><br>
+                <label>Email (optional): </label><input type="text" name="email"/><br>
+                <input type="submit">
+            </form>
+            """
+
+        content = page_header + signup_form + page_footer
+
+        self.response.write(content)
+
 
 
 # TODO 1: Create form with all fields
