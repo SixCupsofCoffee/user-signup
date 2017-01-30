@@ -42,11 +42,10 @@ page_footer = """
 </html>
 """
 
-class MainHandler(webapp2.RequestHandler):
-
-
+class Index(webapp2.RequestHandler):
 
     def get(self):
+        # basic signup form
         signup_form = """
             <form action="/signup" method="post">
                 <label>Username: </label><input type="text" name="username"/><br>
@@ -57,15 +56,51 @@ class MainHandler(webapp2.RequestHandler):
             </form>
             """
 
+        # display any errors
+        error = self.request.get("error")
+        error_display = "<p class='error'>" + error + "</p>"
+        if error else ""
+
         content = page_header + signup_form + page_footer
 
         self.response.write(content)
 
+class Signup(webapp2.RequestHandler):
+
+    def post(self):
+        # get user elements from form
+        user = self.request.get("username")
+        pass1 = self.request.get("password1")
+        pass2 = self.request.get("password2")
+        email_add = self.request.get("email")
+
+        # error messages
+        username_error = "That isn't a valid username"
+        password_blank_error = "You must enter a password"
+        password_match_error = "Your passwords do not match"
+        email_error = "That isn't a valid email address"
+
+        success_message = page_header + "<h1>You successfully signed up, " + user + "!</h1>" + page_footer
+
+        # error handling
+        if user == "":
+            self.redirect("/?error=" + username_error)
+
+        if pass1 == "":
+            self.redirect("/?error=" + password_blank_error)
+
+        if pass1 != pass2:
+            self.redirect("/?error=" + password_match_error)
+
+        # if email_add: REQUIRES REGEX, HOLD OFF UNTIL TODO 4
+
+        self.response.write(success_message)
 
 
-# TODO 1: Create form with all fields
 
-# TODO 2: Create handler for successful form
+# COMPLETED TODO 1: Create form with all fields  COMPLETED
+
+# COMPLETED TODO 2: Create handler for successful form COMPLETED
 
 # TODO 3: Create error handler
 
@@ -78,5 +113,6 @@ class MainHandler(webapp2.RequestHandler):
 # TODO 7: Refactor code
 
 app = webapp2.WSGIApplication([
-    ('/', MainHandler)
+    ('/', Index),
+    ('/signup', Signup)
 ], debug=True)
