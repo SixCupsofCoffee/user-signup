@@ -45,23 +45,22 @@ page_footer = """
 class Index(webapp2.RequestHandler):
 
     def get(self):
+        # display any errors
+        error = self.request.get("error")
+        error_display = "<div class='error'>" + error + "</div>" if error else ""
+
         # basic signup form
-        signup_form = """
-            <form action="/signup" method="post">
-                <label>Username: </label><input type="text" name="username"/><br>
-                <label>Password: </label><input type="password" name="password1"/><br>
-                <label>Password again: </label><input type="password" name="password2"/><br>
-                <label>Email (optional): </label><input type="text" name="email"/><br>
-                <input type="submit">
+        signup_form = "<form action='/signup' method='post'>"
+        username_form = "<label>Username: </label><input type='text' name='username'/>" + error_display + "<br/>"
+        password_form = "<label>Password: </label><input type='password' name='password1'/>" + error_display + "<br/>"
+        password_conf_form = "<label>Password again: </label><input type='password' name='password2'/>" + error_display + "<br/>"
+        email_form = "<label>Email (optional): </label><input type='text' name='email'/>" + error_display + "<br/>"
+        form_end = """
+        <input type="submit">
             </form>
             """
 
-        # display any errors
-        error = self.request.get("error")
-        error_display = "<p class='error'>" + error + "</p>"
-        if error else ""
-
-        content = page_header + signup_form + page_footer
+        content = page_header + signup_form + username_form + password_form + password_conf_form + email_form + form_end + page_footer
 
         self.response.write(content)
 
@@ -75,6 +74,7 @@ class Signup(webapp2.RequestHandler):
         email_add = self.request.get("email")
 
         # error messages
+        blank_form_error = "You must fill out the form"
         username_error = "That isn't a valid username"
         password_blank_error = "You must enter a password"
         password_match_error = "Your passwords do not match"
@@ -83,13 +83,13 @@ class Signup(webapp2.RequestHandler):
         success_message = page_header + "<h1>You successfully signed up, " + user + "!</h1>" + page_footer
 
         # error handling
-        if user == "":
+        if user == "" and pass1 == "" and pass2 == "":
+            self.redirect("/?error=" + blank_form_error)
+        elif user == "":
             self.redirect("/?error=" + username_error)
-
-        if pass1 == "":
+        elif pass1 == "":
             self.redirect("/?error=" + password_blank_error)
-
-        if pass1 != pass2:
+        elif pass1 != pass2:
             self.redirect("/?error=" + password_match_error)
 
         # if email_add: REQUIRES REGEX, HOLD OFF UNTIL TODO 4
@@ -102,7 +102,7 @@ class Signup(webapp2.RequestHandler):
 
 # COMPLETED TODO 2: Create handler for successful form COMPLETED
 
-# TODO 3: Create error handler
+# COMPLETED TODO 3: Create error handler COMPLETED
 
 # TODO 4: Add regex to validate
 
