@@ -18,8 +18,6 @@
 import webapp2
 import cgi
 
-# -*- coding: utf-8 -*-
-
 page_header = """
 <!DOCTYPE html>
 <html>
@@ -41,27 +39,30 @@ page_footer = """
 </body>
 </html>
 """
-une=""
-pwve=""
-pwme=""
 
 # basic signup form
 # includes tables and error messages
 signup_form = """
 <form action="/" method="post">
 <table>
-    <tr><td><label>Username: </td></label><td><input type="text" name="username"/></td> <td><span class="error">%s</span></td></tr>
-    <tr><td><label>Password: </td></label><td><input type="password" name="password1"/></td> <td><span class="error">%s</span></td></tr>
-    <tr><td><label>Password again: </td></label><td><input type="password" name="password2"/></td> <td><span class="error">%s</span></td></tr>
+    <tr><td><label>Username: </td></label><td><input type="text" name="username" /></td> <td><span class="error">%(une)s</span></td></tr>
+    <tr><td><label>Password: </td></label><td><input type="password" name="password1"/></td> <td><span class="error">%(pwve)s</span></td></tr>
+    <tr><td><label>Password again: </td></label><td><input type="password" name="password2"/></td> <td><span class="error">%(pwme)s</span></td></tr>
     <tr><td><label>Email (optional): </td></label><td><input type="text" name="email"/></td></tr>
 </table>
 <input type="submit">
     </form>
-    """ % (une, pwve, pwme)
+    """
 
 class Index(webapp2.RequestHandler):
 
     def write_form(self, une="", pwve="", pwme=""):
+        if une == None:
+            une = ""
+        if pwve == None:
+            pwve = ""
+        if pwme == None:
+            pwme = ""
         self.response.write(page_header + signup_form % {"une":une, "pwve":pwve, "pwme":pwme} + page_footer)
 
     def get(self):
@@ -73,46 +74,31 @@ class Index(webapp2.RequestHandler):
             if usern == "" or " " in usern:
                 return "That is not a valid username"
             else:
-                return ""
+                return None
 
         def valid_password(pw1):
             if pw1 == "":
                 return "That is not a valid password"
             else:
-                return ""
+                return None
 
         def valid_password_match(pw1, pw2):
             if pw1 != pw2:
                 return "Your passwords do not match"
             else:
-                return ""
+                return None
 
         une = valid_username(self.request.get("username"))
         pwve = valid_password(self.request.get("password1"))
         pwme = valid_password_match(self.request.get("password1"), self.request.get("password2"))
 
-        if (une != "" and pwve != "" and pwme != ""):
+        if not (une and pwme and pwve):
             self.write_form(une,pwve,pwme)
         else:
             success_message = page_header + "<h1>You successfully signed up, " + self.request.get("username") + "!</h1>" + page_footer
 
             self.response.write(success_message)
 
-
-
-# COMPLETED TODO 1: Create form with all fields  COMPLETED
-
-# COMPLETED TODO 2: Create handler for successful form COMPLETED
-
-# TODO 3: Create error handler
-
-# TODO 4: Add regex to validate
-
-# TODO 5: Connect validation to error handling
-
-# TODO 6: Create correct styling for errors
-
-# TODO 7: Refactor code
 
 app = webapp2.WSGIApplication([
     ('/', Index)
