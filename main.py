@@ -46,15 +46,18 @@ class Index(webapp2.RequestHandler):
 
     def get(self):
         # display any errors
-        error = self.request.get("error")
-        error_display = "<div class='error'>" + error + "</div>" if error else ""
+        bfe = self.request.get("error1")
+        une = self.request.get("error2")
+        pwve = self.request.get("error3")
+        pwme = self.request.get("error4")
 
         # basic signup form
+        # includes tables and error messages
         signup_form = "<form action='/signup' method='post'>"
-        username_form = "<label>Username: </label><input type='text' name='username'/>" + error_display + "<br/>"
-        password_form = "<label>Password: </label><input type='password' name='password1'/>" + error_display + "<br/>"
-        password_conf_form = "<label>Password again: </label><input type='password' name='password2'/>" + error_display + "<br/>"
-        email_form = "<label>Email (optional): </label><input type='text' name='email'/>" + error_display + "<br/>"
+        username_form = "<table><tr><td><label>Username: </td></label><td><input type='text' name='username'/></td> <td><span class='error'>" + une + "</span></td></tr><br"
+        password_form = "<tr><td><label>Password: </td></label><td><input type='password' name='password1'/></td> <td><span class='error'>" + pwve + "</span></td></tr>"
+        password_conf_form = "<tr><td><label>Password again: </td></label><td><input type='password' name='password2'/></td> <td><span class='error'>" + pwme + "</span></td></tr>"
+        email_form = "<tr><td><label>Email (optional): </td></label><td><input type='text' name='email'/></td></tr></table>"
         form_end = """
         <input type="submit">
             </form>
@@ -83,14 +86,12 @@ class Signup(webapp2.RequestHandler):
         success_message = page_header + "<h1>You successfully signed up, " + user + "!</h1>" + page_footer
 
         # error handling
-        if user == "" and pass1 == "" and pass2 == "":
-            self.redirect("/?error=" + blank_form_error)
-        elif user == "":
-            self.redirect("/?error=" + username_error)
-        elif pass1 == "":
-            self.redirect("/?error=" + password_blank_error)
-        elif pass1 != pass2:
-            self.redirect("/?error=" + password_match_error)
+        if user == "" or " " in user:
+            self.redirect("/?error2=" + username_error)
+        if pass1 == "":
+            self.redirect("/?error3=" + password_blank_error)
+        if pass1 != pass2:
+            self.redirect("/?error4=" + password_match_error)
 
         # if email_add: REQUIRES REGEX, HOLD OFF UNTIL TODO 4
 
