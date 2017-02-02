@@ -92,12 +92,12 @@ class Index(webapp2.RequestHandler):
         pwve = valid_password(self.request.get("password1"))
         pwme = valid_password_match(self.request.get("password1"), self.request.get("password2"))
 
-        if not (une and pwme and pwve):
-            self.write_form(une,pwve,pwme)
-        else:
-            success_message = page_header + "<h1>You successfully signed up, " + self.request.get("username") + "!</h1>" + page_footer
+        success_message = page_header + "<h1>You successfully signed up, " + self.request.get("username") + "!</h1>" + page_footer
 
-            self.response.write(success_message)
+        if (une == None and pwve == None and pwme == None):
+            self.response.write(success_message)    
+        else:
+            self.write_form(une,pwve,pwme)
 
 
 app = webapp2.WSGIApplication([
