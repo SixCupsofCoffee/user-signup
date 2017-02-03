@@ -105,17 +105,18 @@ class Index(webapp2.RequestHandler):
                 return None
 
 
-        une = valid_username(self.request.get("username"))
-        pwve = valid_password(self.request.get("password1"))
-        pwme = valid_password_match(self.request.get("password1"), self.request.get("password2"))
-        eme = valid_email(self.request.get("email"))
+        une = valid_username(cgi.escape(self.request.get("username")))
+        pwve = valid_password(cgi.escape(self.request.get("password1")))
+        pwme = valid_password_match(cgi.escape(self.request.get("password1")), cgi.escape(self.request.get("password2")))
+        eme = valid_email(cgi.escape(self.request.get("email")))
 
         success_message = page_header + "<h1>You successfully signed up, " + self.request.get("username") + "!</h1>" + page_footer
 
         if (une == None and pwve == None and pwme == None and eme == None):
             self.redirect("/success?username=" + self.request.get("username"))
         else:
-            self.write_form(une,pwve,pwme,eme)
+            usern = self.request.get("username")
+            self.write_form(usern,une,pwve,pwme,eme)
 
 class Success(webapp2.RequestHandler):
 
